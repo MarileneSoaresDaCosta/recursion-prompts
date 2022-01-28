@@ -7,16 +7,82 @@
 // Example: 5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5); // 120
 var factorial = function(n) {
+  // edge case
+  if ( n < 0 ) {
+    return null;
+  }
+  // base case
+  if ( n === 1 || n === 0) {
+    return 1;
+  } else {
+
+    var fact = n * factorial(n-1);
+    // console.log('fact of ' , n, ' is ', fact);
+    return fact;
+  }
 };
 
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
+
+// strat - call sum for sub arrays until reach end
+// I - array of nums, also negative
+// O - single number
+// C - cannot mutate array
+// E -   empty array returns 0;
+      // array can have single int
 var sum = function(array) {
+  // edge case : empty array
+  if (array.length === 0) {
+    return 0;
+  }
+
+  // create copy of array to avoid mutating input array
+  var workingArray = array.slice();
+  var result = 0;
+
+  // base case - arr has a single element
+  if ( workingArray.length === 1) {
+    result = workingArray[0];
+    return result;
+  }
+
+  var sumOfTwo = workingArray[0] + workingArray[1];
+  workingArray.splice(0, 2, sumOfTwo);
+  result = sum(workingArray);
+  return result;
 };
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
+// strat -
+// I - array of nums, also negative
+// O - single number
+// C - cannot mutate input array; should be invoked with one argument
+// E -   empty array returns 0; array can have single int
+
 var arraySum = function(array) {
+  console.log('array:', array);
+  // create copy of array
+  var workingArray = array.slice();
+  var result = 0;
+  if ( workingArray.length === 0) {
+    return 0;
+  }
+  // base case - input passed is a single element
+  if (workingArray.length === 1 && !Array.isArray(workingArray[0])) {
+    result = result + workingArray[0];
+    return result;
+  }
+  // recursive case - call self
+  workingArray.forEach(function(item){
+    if(!Array.isArray(item)) {
+      result = result + item;
+    } else {
+      result = result + arraySum(item);
+    }
+  });
+  return result;
 };
 
 // 4. Check if a number is even.
