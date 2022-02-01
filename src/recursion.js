@@ -55,14 +55,14 @@ var sum = function(array) {
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
-// strat -
+// strat - i initially thought about flattening first then calling sum. But I guess this is not what the exercise expects
 // I - array of nums, also negative
 // O - single number
 // C - cannot mutate input array; should be invoked with one argument
 // E -   empty array returns 0; array can have single int
 
 var arraySum = function(array) {
-  console.log('array:', array);
+  // console.log('array:', array);
   // create copy of array
   var workingArray = array.slice();
   var result = 0;
@@ -85,20 +85,112 @@ var arraySum = function(array) {
   return result;
 };
 
+// strat -
+// I - integer, can be negative
+// O - boolean
+// C -
+  // should use recursion by calling self;
+  // cannot use modulo
+  // should be invoked with one argument
+// E - is zero ? yeap, line 236 in tests
+
 // 4. Check if a number is even.
 var isEven = function(n) {
+
+  if (n === 0) {
+    return true;
+  } else if( n === 1) {
+    return false;
+  }  else if (n > 0) {
+    return isEven (n - 2);
+  } else {
+    return isEven (-n);
+  }
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
+// sumBelow(-6): // -15
 var sumBelow = function(n) {
+  if(n === 0) {
+    return 0;
+  }
+  // base case
+  if( n === 1 || n === -1) {
+    return 0;
+  }
+  // recursive
+  if ( n > 1 ) {
+    return sumBelow(n-1) + (n-1);
+  } else if (n < -1) {
+    return sumBelow(n+1) + (n+1);
+  }
+
 };
+
+
+// strat - similar to sumBelow, figure out how to find a recursion in the process of creating the result array
+
+// I - two integers, x and y. Can be negative. Can be in 'reverse' order
+  // for example, range(7, 2) //-> [6, 5, 4, 3]
+
+// O - an array with integers between x and y
+// C:
+  // should use recursion by calling self;
+  // should be invoked with two arguments
+// E - if no integers in range, return empty array:
+       // range(5, 5) // -> []
+       // range(2, 3) // -> []
+       // range(-2,-2)// -> []
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
-var range = function(x, y) {
-};
+  var range = function(x, y) {
+
+    var dif = Math.abs(x - y);
+    var min = Math.min(x, y);
+    var max = Math.max(x, y);
+    var item = (min + max)/ 2;
+    var result = [];
+    // console.log('min: ', min, 'max: ', max);
+    // no integers in range
+    if (dif < 2) {
+      return [];
+    }
+    // base case - only one integer in range
+    if (dif === 2) {
+      result.push(item);
+      return result;
+    }
+
+    var i = 0;
+    var j = 2
+    while (min + j <= max ) {
+      // console.log('range of ', min+i, min+j);
+      result = result.concat(range(min + i, min + j));
+      i++;
+      j++;
+    }
+
+    if(x === max) {
+      return result.reverse();
+    }
+    return result;
+  };
+
+
+// strat - exponentiation is a series of multiplications - so the recursion is repeat as many times as the exponent determines -> loop starting at zero (base case: num to the power of zero = 1, a multiplication identity)
+
+// I - (I think) two integers, base and exponent. Exponent can be negative, but I don't see any tests for base < 0
+  // (3,4) // -> 81
+  // (4, -2) //-> 0.0625 (1/(4**2))
+// O - a number (float)
+// C:
+  // should use recursion by calling self;
+  // should be invoked with two arguments
+  // cannot use Math
+// E -
 
 // 7. Compute the exponent of a number.
 // The exponent of a number says how many times the base number is used as a factor.
@@ -106,21 +198,93 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
+  var result = 1;
+  var neg = exp < 0;
+  if(neg){
+    exp = -exp;
+  }
+  // base case
+  if ( exp === 0) {
+    return result * 1;
+  }
+
+  if( exp === 1) {
+    return result * base;
+  }
+
+  for (var i = 0; i < exp ; i++){
+    // console.log('loop i = ', i);
+    result = result * exponent(base, 1);
+  }
+
+  if (neg === true) {
+    return 1/ parseFloat(result);
+  } else {return result; }
+
 };
+
+
+// strat -  try 2^ 0... n until reach num (true). If go above, then false Nope, this would not go TOWARDS the base case. - Then, divide by 2 until we reach either 1 (base case, true) or a non-integer - (false)
+
+// I - a posiitive integer (as seen in tests)
+  // powerOfTwo(5) // -> false
+  // powerOfTwo(1) // -> true
+  // powerOfTwo(128) // -> true
+// O - a boolean
+// C:
+  // should use recursion by calling self;
+  // should be invoked with one argument
+  // cannot use Math
+
+// E - n === 0 > return false
+   //  n ==== 1 > return true
 
 // 8. Determine if a number is a power of two.
 // powerOfTwo(1); // true
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+  if(n === 0 ) {
+    return false;
+  }
+
+  if (n === 1){
+    return true;
+  }
+  console.log('n/2', n/2);
+  if (!Number.isInteger(n / 2)) {
+    return false;
+  } else {
+    return powerOfTwo(n / 2);
+  }
 };
+// strat -  concatenate a new (result) string until reach end of original string >> did not work, because result was always cleaned.
+// in the recursive call, return recursion of increasingly smaller string (slice(1)) + the first char. As it approaches the base case, it will be the last char (base case length of 1), and all +charAt(0)s will be returned exactly in reverse order
+// I - a string
+// O - a string in reverse order
+// C - cannot use native reverse method; use recursion (calling self) and invoke with one argument
+// E - if string is empty?
 
 // 9. Write a function that reverses a string.
+
 var reverse = function(string) {
+  if ( string.length <= 1 ) {
+    return string;
+  }
+  return reverse(string.slice(1)) + string.charAt(0);
 };
 
 // 10. Write a function that determines if a string is a palindrome.
 var palindrome = function(string) {
+  var str = string.split(' ').join('').toLowerCase();
+  if ( str.length <= 1) {
+    return true;
+  }
+  if ( str[0] !== str[str.length - 1] ) {
+    return false;
+  }
+  return palindrome(str.slice(1, -1));
+
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -202,12 +366,35 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+  var count = 0;
+
+  for (var key in obj) {
+
+    if ( obj[key] === value ) {
+      count++;
+    }
+    if(typeof obj[key] === 'object') {
+      count += countValuesInObj(obj[key], value);
+    }
+  }
+   return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, oldKey, newKey) {
+  for (var key in obj) {
+    if ( key === oldKey ) {
+      obj[newKey] = obj[key];
+      delete obj[key];
+    }
+    if(typeof obj[key] === 'object') {
+      obj[key] = replaceKeysInObj(obj[key], oldKey, newKey);
+    }
+  }
+   return obj;
 };
+
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
 // number is the sum of the previous two.
